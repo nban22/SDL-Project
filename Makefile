@@ -23,5 +23,3 @@ $(EXECUTABLE): $(SRCS)
 run:
 	$(EXECUTABLE)
 
-# clean:
-# 	rm -f $(EXECUTABLE)

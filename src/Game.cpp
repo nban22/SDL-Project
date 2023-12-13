@@ -3,12 +3,18 @@
 #include "GameObject.h"
 #include "Map.h"
 
+#include "ECS.h"
+#include "Components.h"
+
 GameObject *supermen = nullptr;
 GameObject *hero = nullptr;
 
 SDL_Renderer* Game::g_renderer = nullptr;
 
 Map *map = nullptr;
+
+Manager manager;
+auto& newPlayer = manager.addEntity();
 
 Game::Game() {
     m_isRunning = false;
@@ -51,6 +57,9 @@ void Game::init(std::string title, int x, int y, int w, int h, bool isFullscreen
     supermen = new GameObject("assets/supermen.png", 0, 256, 1200, 1200);
     hero = new GameObject("assets/hero.png", 0, 0, 1296, 1296);
     map = new Map();
+
+    newPlayer.addComponent<PositionComponent>();
+    newPlayer.getComponent<PositionComponent>().setPos(500, 500);
 }
 
 void Game::handleEvents() {
@@ -68,6 +77,9 @@ void Game::handleEvents() {
 void Game::update() {
     supermen->update();
     hero->update();
+
+    manager.update();
+    std::cout << newPlayer.getComponent<PositionComponent>().getX() << ", " << newPlayer.getComponent<PositionComponent>().getY() << std::endl;
 }
 
 void Game::render() {
