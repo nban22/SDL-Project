@@ -21,3 +21,11 @@ void TextureManager::draw(SDL_Texture *texture, SDL_Rect srcR, SDL_Rect destR) {
         SDL_Quit();
     }
 }
+
+void TextureManager::draw_null_src(SDL_Texture *texture, SDL_Rect destR) {
+    int errorCode = SDL_RenderCopy(Game::g_renderer, texture, nullptr, &destR);
+    if (errorCode != 0) {
+        std::cout << "TextureManager::draw_null_src() Error: " << SDL_GetError() << std::endl;
+        SDL_Quit();
+    }
+}

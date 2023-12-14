@@ -10,16 +10,16 @@
 class Component;
 class Entity;
 
+using ComponentID = std::size_t;
 
-
-inline std::size_t getComponentTypeID() {
-    static std::size_t lastID = 0;
+inline ComponentID getComponentTypeID() {
+    static ComponentID lastID = 0;
     return lastID++;
 }
 
 template <typename T>
-inline size_t getComponentTypeID() noexcept {
-    static size_t typeID = getComponentTypeID();
+inline ComponentID getComponentTypeID() noexcept {
+    static ComponentID typeID = getComponentTypeID();
     return typeID;
 }
 
@@ -105,7 +105,7 @@ public:
     
     Entity& addEntity() {
         Entity* e = new Entity();
-        std::unique_ptr<Entity> uPtr { e };
+        std::unique_ptr<Entity> uPtr {e};
         m_entities.emplace_back(std::move(uPtr));
         return *e;
     }

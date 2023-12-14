@@ -1,20 +1,18 @@
 #include "Game.h"
 
-#include "GameObject.h"
 #include "Map.h"
 
-#include "ECS.h"
-#include "Components.h"
+#include "ECS/Components.h"
+#include "Vector2D.h"
 
-GameObject *supermen = nullptr;
-GameObject *hero = nullptr;
-
-SDL_Renderer* Game::g_renderer = nullptr;
+SDL_Renderer* Game::g_renderer = nullptr; //static
 
 Map *map = nullptr;
 
+SDL_Event Game::g_event;
+
 Manager manager;
-auto& newPlayer = manager.addEntity();
+auto& superman = manager.addEntity();
 
 Game::Game() {
     m_isRunning = false;
@@ -22,11 +20,7 @@ Game::Game() {
     m_count     = 0;
 }
 Game::~Game() {
-    delete supermen;
-    delete hero;
-    delete map;
 
-    Game::clean();
 }
 
 void Game::init(std::string title, int x, int y, int w, int h, bool isFullscreen) {
@@ -54,18 +48,16 @@ void Game::init(std::string title, int x, int y, int w, int h, bool isFullscreen
     m_isRunning = true;
     SDL_SetRenderDrawColor(Game::g_renderer, 50, 168, 158, 255);
 
-    supermen = new GameObject("assets/supermen.png", 0, 256, 1200, 1200);
-    hero = new GameObject("assets/hero.png", 0, 0, 1296, 1296);
     map = new Map();
 
-    newPlayer.addComponent<PositionComponent>();
-    newPlayer.getComponent<PositionComponent>().setPos(500, 500);
+    superman.addComponent<TransformComponent>();
+    superman.addComponent<SpriteComponent>("assets/superman.png");
+    superman.addComponent<KeyboardController>();
 }
 
 void Game::handleEvents() {
-    SDL_Event event;
-    SDL_PollEvent(&event);
-    switch (event.type) {
+    SDL_PollEvent(&Game::g_event);
+    switch (Game::g_event.type) {
     case SDL_QUIT:
         m_isRunning = false;
         break;
@@ -75,22 +67,21 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-    supermen->update();
-    hero->update();
-
+    manager.refresh();
     manager.update();
-    std::cout << newPlayer.getComponent<PositionComponent>().getX() << ", " << newPlayer.getComponent<PositionComponent>().getY() << std::endl;
 }
 
 void Game::render() {
     SDL_RenderClear(Game::g_renderer);
     map->drawMap();
-    supermen->render();
-    hero->render();
+    manager.draw();
     SDL_RenderPresent(Game::g_renderer);
 }
 
 void Game::clean() {
+    // delete map;
+    // delete Game::g_renderer;
+
     if (m_window) {
         SDL_DestroyWindow(m_window);
     }

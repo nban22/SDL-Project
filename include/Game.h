@@ -16,6 +16,7 @@ public:
     ~Game();
 
     static SDL_Renderer *g_renderer;
+    static SDL_Event g_event;
 
     void init(std::string title, int x, int y, int w, int h, bool isFullscreen);
     void handleEvents();
